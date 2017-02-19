@@ -1,3 +1,11 @@
+# vim
+*.swp
+
+# Auto-generated
+android/app/src/main/gen/
+react-native-packager-cache-2105109c
+haste-map-react-native-packager-29bfaa8daad01972c3b6a843a442bd7b
+
 # OSX
 #
 .DS_Store
