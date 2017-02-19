@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { Text,
-	 ListView,
+	       ListView,
+         TouchableHighlight,
        } from 'react-native';
 import { ApiKey } from './api_key';
 
@@ -44,15 +45,23 @@ export class MembersList extends Component {
   }
 
   _renderRow(rowData) {
-    return(<Text>{rowData}</Text>);
+    return(
+      <TouchableHighlight onPress={() => this.props.onSelect('FAKE_MEMBER_ID')}>
+        <Text>{rowData}</Text>
+      </TouchableHighlight>
+    );
   }
 
   render() {
     return (
       <ListView
-	dataSource={this.state.dataSource}
-	renderRow={this._renderRow}
-	/>
+        dataSource={this.state.dataSource}
+        renderRow={(rowData) => this._renderRow(rowData)}
+      />
     );
   }
 }
+
+MembersList.propTypes = {
+  onSelect: PropTypes.func.isRequired,
+};

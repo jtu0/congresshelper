@@ -1,6 +1,6 @@
 import React, { Component } from 'react'; 
-import { AppRegistry,
-       } from 'react-native';
-import { MembersList } from './members_list';
+import { AppRegistry } from 'react-native';
+import { Navigation, addAndroidBackSupport } from './navigation';
 
-AppRegistry.registerComponent('CongressHelper', () => MembersList);
+addAndroidBackSupport();
+AppRegistry.registerComponent('CongressHelper', () => Navigation);
