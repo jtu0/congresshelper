@@ -5,14 +5,27 @@ import { Text,
        } from 'react-native';
 import { ApiKey } from './api_key';
 
+var membersHouse = { displayNames: [], lastUpdated: null };
 export class MembersList extends Component {
   constructor(props) {
     super(props);
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: dataSource.cloneWithRows([])
+      dataSource: dataSource.cloneWithRows(membersHouse.displayNames),
     }
-    this._getMembersHouseFromApiAsync();
+    var fifty_minutes = 3000000;
+    if (membersHouse.lastUpdated === null || Date.now() - membersHouse.lastUpdate > fifty_minutes) {
+      this._setMembersHouse();
+    }
+  }
+
+
+  async _setMembersHouse() {
+    membersHouse.displayNames = await this._getMembersHouseFromApiAsync();
+    membersHouse.lastUpdated = Date.now();
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(membersHouse.displayNames),
+    });
   }
 
   async _getMembersHouseFromApiAsync() {
@@ -26,13 +39,10 @@ export class MembersList extends Component {
                             member.first_name + ' ' + member.last_name);
         }
       }
-      displayNames.sort()
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(displayNames),
-      });
     } catch (error) {
       console.error(error);
     }
+    return displayNames.sort();
   }
 
   _fetchMembersHouse() {
