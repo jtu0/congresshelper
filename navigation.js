@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Navigator,
          BackAndroid
        } from 'react-native';
-import { MembersList } from './members_list';
-import { MemberDetails } from './member_details';
+import { Members } from './members';
+import { Member } from './member';
 
 var _navigator;
 
@@ -30,13 +30,13 @@ export class Navigation extends Component {
 
   _renderScene(route, navigator) {
     if (route.member === null) {
-      return <MembersList
+      return <Members
         onSelect={(member) => {
           navigator.push({ member: member })
         }}
       />
     } else {
-      return <MemberDetails
+      return <Member
         member={route.member}
       />
     }

@@ -6,7 +6,7 @@ import { Text,
 import { ApiKey } from './api_key';
 
 var membersHouse = { members: [], lastUpdated: null };
-export class MembersList extends Component {
+export class Members extends Component {
   constructor(props) {
     super(props);
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -79,6 +79,6 @@ export class MembersList extends Component {
   }
 }
 
-MembersList.propTypes = {
+Members.propTypes = {
   onSelect: PropTypes.func.isRequired,
 };

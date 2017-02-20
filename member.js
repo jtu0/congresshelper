@@ -7,7 +7,7 @@ import { ListView,
 import { ApiKey } from './api_key';
 
 var member = { committees: [], lastUpdated: null };
-export class MemberDetails extends Component {
+export class Member extends Component {
   constructor(props) {
     super(props);
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -93,6 +93,6 @@ export class MemberDetails extends Component {
   }
 }
 
-MemberDetails.propTypes = {
+Member.propTypes = {
   member: PropTypes.object.isRequired,
 };
