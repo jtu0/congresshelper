@@ -5,13 +5,13 @@ import { Text,
        } from 'react-native';
 import { ApiKey } from './api_key';
 
-var membersHouse = { displayNames: [], lastUpdated: null };
+var membersHouse = { members: [], lastUpdated: null };
 export class MembersList extends Component {
   constructor(props) {
     super(props);
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: dataSource.cloneWithRows(membersHouse.displayNames),
+      dataSource: dataSource.cloneWithRows(membersHouse.members),
     }
     var fifty_minutes = 3000000;
     if (membersHouse.lastUpdated === null || Date.now() - membersHouse.lastUpdate > fifty_minutes) {
@@ -21,10 +21,10 @@ export class MembersList extends Component {
 
 
   async _setMembersHouse() {
-    membersHouse.displayNames = await this._getMembersHouseFromApiAsync();
+    membersHouse.members = await this._getMembersHouseFromApiAsync();
     membersHouse.lastUpdated = Date.now();
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(membersHouse.displayNames),
+      dataSource: this.state.dataSource.cloneWithRows(membersHouse.members),
     });
   }
 
@@ -32,17 +32,22 @@ export class MembersList extends Component {
     try {
       let response = await this._fetchMembersHouse();
       let responseJson = await response.json();
-      displayNames = [];
+      members = [];
       for (var result of responseJson.results) {
         for (var member of result.members) {
-          displayNames.push('(' + member.state + '-' + member.district + ' ' + member.party + ') ' +
-                            member.first_name + ' ' + member.last_name);
+          members.push(member);
         }
       }
     } catch (error) {
       console.error(error);
     }
-    return displayNames.sort();
+    return members.sort((a,b) => {
+      if (a.state < b.state) { return -1; }
+      if (a.state > b.state) { return +1; }
+      if (a.district < b.district) { return -1; }
+      if (a.district > b.district) { return +1; }
+      return 0;
+    });
   }
 
   _fetchMembersHouse() {
@@ -54,10 +59,12 @@ export class MembersList extends Component {
     });
   }
 
-  _renderRow(rowData) {
+  _renderRow(member) {
+    text = ('(' + member.state + '-' + member.district + ' ' + member.party + ') '
+            + member.first_name + ' ' + member.last_name);
     return(
-      <TouchableHighlight onPress={() => this.props.onSelect('FAKE_MEMBER_ID')}>
-        <Text>{rowData}</Text>
+      <TouchableHighlight onPress={() => this.props.onSelect(member)}>
+        <Text>{text}</Text>
       </TouchableHighlight>
     );
   }
@@ -66,7 +73,7 @@ export class MembersList extends Component {
     return (
       <ListView
         dataSource={this.state.dataSource}
-        renderRow={(rowData) => this._renderRow(rowData)}
+        renderRow={(member) => this._renderRow(member)}
       />
     );
   }

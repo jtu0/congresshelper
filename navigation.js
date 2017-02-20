@@ -22,22 +22,22 @@ export class Navigation extends Component {
     return(
       <Navigator
         ref={(nav) => {_navigator=nav; }}
-        initialRoute={{memberId: null}}
+        initialRoute={{member: null}}
         renderScene={this._renderScene}
       />
     )
   }
 
   _renderScene(route, navigator) {
-    if (route.memberId === null) {
+    if (route.member === null) {
       return <MembersList
-        onSelect={(memberId) => {
-          navigator.push({ memberId: memberId })
+        onSelect={(member) => {
+          navigator.push({ member: member })
         }}
       />
     } else {
       return <MemberDetails
-        memberId={route.memberId}
+        member={route.member}
       />
     }
   }
