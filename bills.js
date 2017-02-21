@@ -10,7 +10,7 @@ export class Bills extends Component {
     super(props);
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: dataSource.cloneWithRows([]),
+      dataSource: dataSource.cloneWithRows([null]),
     }
     this._setMemberCommitteeBills();
   }
@@ -25,6 +25,9 @@ export class Bills extends Component {
   }
 
   _renderRow(bill) {
+    if (bill === null) {
+      return(<Text>No bills in these committees.</Text>)
+    }
     return(
       <View>
         <Text>[{bill.number}] {bill.title}</Text>
@@ -36,9 +39,11 @@ export class Bills extends Component {
 
   async _setMemberCommitteeBills() {
     committeeBills = await this._getBillsFromApiAsync();
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(committeeBills),
-    });
+    if (committeeBills.length > 0) {
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(committeeBills),
+      });
+    }
   }
 
   async _getBillsFromApiAsync() {

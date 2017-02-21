@@ -13,7 +13,7 @@ export class Member extends Component {
     super(props);
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: dataSource.cloneWithRows([]),
+      dataSource: dataSource.cloneWithRows([null]),
       committees: new Set(),
     }
     this._setMemberCommittees();
@@ -24,12 +24,15 @@ export class Member extends Component {
     party = m.party=='R' ? 'Republican' :
             m.party=='D' ? 'Democrat' :
             m.party;
-    state = m.district===null ? m.state : m.state + '-' + m.district;
+    if (m.district === undefined) {
+      stateDistrict = m.state
+    } else {
+      stateDistrict = m.state + '-' + m.district;
+    }
     return (
       <View>
-        <Text>This is the member details page for member {m.id}.</Text>
         <Text>{m.first_name} {m.last_name}</Text>
-        <Text>{party} from {state}</Text>
+        <Text>{party} from {stateDistrict}</Text>
         <ListView
           dataSource={this.state.dataSource}
           renderRow={(committee) => this._renderRow(committee)}
@@ -42,7 +45,12 @@ export class Member extends Component {
   }
 
   _renderRow(committee) {
-    text=committee.name + ' (through ' + committee.end_date + ')';
+    if (committee===null) {
+      text='(loading details...)';
+    }
+    else {
+      text=committee.name + ' (through ' + committee.end_date + ')';
+    }
     return(
       <Text>{text}</Text>
     )
