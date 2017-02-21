@@ -5,21 +5,19 @@ import { ListView,
          View,
        } from 'react-native';
 import { ApiKey } from './api_key';
+import { Bills } from './bills';
+import { committee_canonical_name } from './committee';
 
-var member = { committees: [], lastUpdated: null };
 export class Member extends Component {
   constructor(props) {
     super(props);
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
       dataSource: dataSource.cloneWithRows([]),
+      committees: new Set(),
     }
-    var fifty_minutes = 3000000;
-    if (member.lastUpdated === null || Date.now() - member.lastUpdate > fifty_minutes) {
-      this._setMemberCommittees();
-    }
+    this._setMemberCommittees();
   }
-
 
   render() {
     m = this.props.member;
@@ -36,6 +34,9 @@ export class Member extends Component {
           dataSource={this.state.dataSource}
           renderRow={(committee) => this._renderRow(committee)}
         />
+        <Bills
+          filter={(bill) => this.state.committees.has(committee_canonical_name(bill.committees))}
+        />
       </View>
     )
   }
@@ -48,10 +49,11 @@ export class Member extends Component {
   }
 
   async _setMemberCommittees() {
-    member.committees = await this._getMemberFromApiAsync();
-    member.lastUpdated = Date.now();
+    committees = await this._getMemberFromApiAsync();
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(member.committees),
+      dataSource: this.state.dataSource.cloneWithRows(committees),
+      committees: new Set(committees.map((c) =>
+        committee_canonical_name(c.name))),
     });
   }
 
